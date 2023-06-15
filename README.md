@@ -11,7 +11,7 @@ By the final notebook, you'll have created an agent with access to the following
 
 ### **Below is an image showing the user flow interacting with the multi-tool agent using a plan-execute strategy**:
 <center>
-<img src="imgs/user-flow-plan-execute.png" width="1000"/>
+<img src="notebooks/imgs/user-flow-plan-execute.png" width="1000"/>
 </center>
 
 ### **Here's an example of what the user output will look like in a notebook**:
