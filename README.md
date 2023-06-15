@@ -65,7 +65,7 @@ This project consists of a series of notebooks leveraging a customized code base
 - Filter and extract all of the relevant web URLs for a given entity from the GDELT global entity graph or a type of global event for a specified time period leveraging the GDELT data that is publicly available natively in BigQuery. An example could be an ACTOR='World Health Organization', for the time period of March 2020 to Present, including events about COVID lockdown. 
 - Extract the full article and news content from every URL that is returned from the GDELT datasets and generate text embeddings using the [Vertex AI Embeddings Model](https://cloud.google.com/vertex-ai/docs/generative-ai/embeddings/get-text-embeddings) 
 - Create a [Vertex AI Matching Engine](https://cloud.google.com/vertex-ai/docs/matching-engine/overview) Vector Database Index deploy it to an Index Endpoint
-- Insert the generated embeddings into the Matching Engine Vector Database Index 
+- Stream update generated embeddings into the Matching Engine Vector Database Index 
 - Create a managed pipeline to orchestrate the ongoing refresh of the GDELT data into the Matching Engine Vector DB
 ![gdelt-pipeline](notebooks/imgs/pipeline-complete.png)
 - Test the generic semantic search capabilities of the Vector DB, and test using a Langchain Agent with one chain of thought along with one tool
