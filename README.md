@@ -16,7 +16,7 @@ By the final notebook, you'll have created an agent with access to the following
 
 ### **Here's an example of what the user output will look like in a notebook**:
 <center>
-<img src="notebooks/imgs/plan-execute-example-output.png" width="1500"/>
+<img src="notebooks/imgs/agent_plan_execute_chain_output.png" width="1500"/>
 </center>
 
 ## GDELT: A global database of society
