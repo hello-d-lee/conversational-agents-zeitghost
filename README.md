@@ -19,6 +19,7 @@ By the final notebook, you'll have created an agent with access to the following
 <img src="notebooks/imgs/agent_plan_execute_chain_output.png" width="1500"/>
 </center>
 
+
 ## GDELT: A global database of society
 
 Google's mission is to organise the world's information and make it universally accessible and useful. Supported by Google Jigsaw, the [GDELT Project](https://www.gdeltproject.org/) monitors the world's broadcast, print, and web news from nearly every corner of every country in over 100 languages and identifies the people, locations, organizations, themes, sources, emotions, counts, quotes, images and events driving our global society every second of every day, creating a free open platform for computing on the entire world.
