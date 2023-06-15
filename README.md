@@ -16,7 +16,7 @@ By the final notebook, you'll have created an agent with access to the following
 
 ### **Here's an example of what the user output will look like in a notebook**:
 <center>
-<img src="imgs/plan-execute-example-output.png" width="1500"/>
+<img src="notebooks/imgs/plan-execute-example-output.png" width="1500"/>
 </center>
 
 ## GDELT: A global database of society
@@ -31,7 +31,7 @@ For more information on how to navigate the datasets - see the [GDELT 2.0 Data f
 
 ** How to add GDELT 2.0 to your Google Cloud Project **
 
-![Animated gif showing how to add Gdelt 2.0 to bigquery by clicking new data and public data sources](imgs/add-gdelt-to-bq.gif)
+![Animated gif showing how to add Gdelt 2.0 to bigquery by clicking new data and public data sources](notebooks/imgs/add-gdelt-to-bq.gif)
 
 ## Large Data from GDELT needs Effective and Efficient Knowledge Retrieval
 
@@ -41,7 +41,7 @@ Simply accessing and storing the data isn't enough. Processing large queries of 
 
 Below is an example depiction of the information architecture, utilizing Matching Engine and the text embeddings model. 
 
-![Information Architecture showing how Matching Engine is used for semantic search](imgs/info-architecture.png)
+![Information Architecture showing how Matching Engine is used for semantic search](notebooks/imgs/info-architecture.png)
 
 ## Leveraging GenAI Language Models to get Relevant & Real-time Information Using Conversational Agents 
 More than ever, access to relevant and real-time information to make decisions and understand changing patterns and trends critical. Whilst GDELT contains a massive amount of relevant and real-time (up to every 15 min) data, it can be challenging and overwhelming to make sense of it and extract what is most important for specific areas of interest, topics, events, entities. This project, the Zeitghost, provides a reference solution for how you can specify your entities and events of interest to extract from GDELT, index and load them into a vector database, and leverage the Vertex AI Generative Language models with Langchain Agents to interact in a Q&A style with the information. We also show how you can orchestrate and schedule ongoing refreshes of the data to keep the system up to date with the latest information. 
@@ -58,9 +58,10 @@ By allowing agents with access to different source data to interact with each ot
 
 ### Architecture
 
-![Full end to end architecture](imgs/fullarchitecture.png)
+![Full end to end architecture](notebooks/imgs/fullarchitecture.png)
+
 ### Detailed Components
-![gdelt-pipeline](imgs/architecture.png)
+![gdelt-pipeline](notebooks/imgs/architecture.png)
 
 ### Component Flow
 This project consists of a series of notebooks leveraging a customized code base to:
@@ -69,10 +70,10 @@ This project consists of a series of notebooks leveraging a customized code base
 - Create a [Vertex AI Matching Engine](https://cloud.google.com/vertex-ai/docs/matching-engine/overview) Vector Database Index deploy it to an Index Endpoint
 - Insert the generated embeddings into the Matching Engine Vector Database Index 
 - Create a pipeline to orchestrate the ongoing refresh of the GDELT data into the Vector DB
-![gdelt-pipeline](imgs/pipeline-complete.png)
+![gdelt-pipeline](notebooks/imgs/pipeline-complete.png)
 - Test the generic semantic search capabilities of the Vector DB, and test using a Langchain Agent with one chain of thought along with one tool
 - Create a plan-and-execute agent framework where different agents (the GDELT Langchain agent, a BigQuery public trends agent, and a Google Search API agent) are able to talk to each other to answer questions
-![gdelt-pipeline](imgs/public_trends_data.png)
+![gdelt-pipeline](notebooks/imgs/public_trends_data.png)
 
 Next, we are currently working on adding:
 - An application to build and deploy the conversational agent as an API on Google Cloud Run - where it can then be integrated into any application. 
