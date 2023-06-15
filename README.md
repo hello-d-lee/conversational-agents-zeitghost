@@ -60,36 +60,37 @@ By allowing agents with access to different source data to interact with each ot
 
 ![Full end to end architecture](notebooks/imgs/fullarchitecture.png)
 
-### Detailed Components
-![gdelt-pipeline](notebooks/imgs/architecture.png)
-
 ### Component Flow
 This project consists of a series of notebooks leveraging a customized code base to:
 - Filter and extract all of the relevant web URLs for a given entity from the GDELT global entity graph or a type of global event for a specified time period leveraging the GDELT data that is publicly available natively in BigQuery. An example could be an ACTOR='World Health Organization', for the time period of March 2020 to Present, including events about COVID lockdown. 
 - Extract the full article and news content from every URL that is returned from the GDELT datasets and generate text embeddings using the [Vertex AI Embeddings Model](https://cloud.google.com/vertex-ai/docs/generative-ai/embeddings/get-text-embeddings) 
 - Create a [Vertex AI Matching Engine](https://cloud.google.com/vertex-ai/docs/matching-engine/overview) Vector Database Index deploy it to an Index Endpoint
 - Insert the generated embeddings into the Matching Engine Vector Database Index 
-- Create a pipeline to orchestrate the ongoing refresh of the GDELT data into the Vector DB
+- Create a managed pipeline to orchestrate the ongoing refresh of the GDELT data into the Matching Engine Vector DB
 ![gdelt-pipeline](notebooks/imgs/pipeline-complete.png)
 - Test the generic semantic search capabilities of the Vector DB, and test using a Langchain Agent with one chain of thought along with one tool
 - Create a plan-and-execute agent framework where different agents (the GDELT Langchain agent, a BigQuery public trends agent, and a Google Search API agent) are able to talk to each other to answer questions
-![gdelt-pipeline](notebooks/imgs/public_trends_data.png)
 
 Next, we are currently working on adding:
 - An application to build and deploy the conversational agent as an API on Google Cloud Run - where it can then be integrated into any application. 
 - A customizable front end reference architecture that uses the agents once , which can be used to showcase the art of the possible when working 
 - Incorporating future enhancements to the embedding techniques used to improve the relevancy and performance of retrieval 
 
+## How to use this repo
 
-# Using the notebooks
-## Create Vertex Workbench Instance & Setup VPC Peering
+* Setup VPC Peering 
+* Create a Vertex AI Workbench Instance 
+* Run the notebooks
 
-### Important: be sure to create Vertex AI notebook instance within the same VPC Network used for Vertex AI Matching Engine deployment
+#### Important: be sure to create Vertex AI notebook instance within the same VPC Network used for Vertex AI Matching Engine deployment
+
 If you don't use the same VPC network, you will not be able to make calls to the matching engine vector store database
 
-Similar to the setup instructions for Matching Engine in this [Sample Notebook](https://github.com/GoogleCloudPlatform/vertex-ai-samples/blob/main/notebooks/official/matching_engine/sdk_matching_engine_for_indexing.ipynb), there are a few permissions needed in order to be able to create the VPC network and set up VPC peering. 
+### Step 1: Setup VPC Peering using the following `gcloud` commands in Cloud Shell
 
-The following code can be used to create the network and VPC peering needed for Matching Engine Private Endpoint:
+* Similar to the setup instructions for Vertex AI Matching Engine in this [Sample Notebook](https://github.com/GoogleCloudPlatform/vertex-ai-samples/blob/main/notebooks/official/matching_engine/sdk_matching_engine_for_indexing.ipynb), there are a few permissions needed in order to create the VPC network and set up VPC peering
+* Run the following `gcloud` commands in Cloud Shell to create the network and VPC peering needed for deploying Matching Engine indexes to Private Endpoints:
+
 ```
 VPC_NETWORK="YOUR_NETWORK_NAME"
 PROJECT_ID="YOUR_PROJECT_ID"
@@ -115,8 +116,10 @@ gcloud compute addresses create $PEERING_RANGE_NAME --global --prefix-length=16 
 gcloud services vpc-peerings connect --service=servicenetworking.googleapis.com --network=$VPC_NETWORK --ranges=$PEERING_RANGE_NAME --project=$PROJECT_ID
 ```
 
-### gcloud command to create your Vertex AI Workbench notebook:
-Using this base image will ensure you have the proper starting environment to use these notebooks. You can optionally remove the flag to add the GPU. 
+### Step 2: Create Vertex AI Workbench notebook using the following `gcloud` command in Cloud Shell:
+
+* Using this base image will ensure you have the proper starting environment to use these notebooks
+* You can optionally remove the GPU-related flags
 
 ```bash
 INSTANCE_NAME='your-instance-name'
@@ -127,13 +130,26 @@ gcloud notebooks instances create $INSTANCE_NAME \
   --vm-image-family=tf-latest-cu113-debian-11-py39 \
   --machine-type=n1-standard-8 \
   --location=us-central1-a \
-  --network=$VPC_NETWORK
+  --network=$VPC_NETWORK \
+  --install-gpu-driver \
+  --accelerator-type=NVIDIA_TESLA_T4 \
+  --accelerator-core-count=1
 ```
-## Notebooks
-0. [Environment Setup](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_palm_api.ipynb) - used to create configurations once that can be used for the rest of the notebooks
-1. [Setup Vertex Vector Store](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_palm_api.ipynb) - create the Vertex AI Matching Engine Vector Store Index, deploy it to an endpoint. This can take 40-50 min, so whilst waiting the next notebook can be run. 
-2. [GDELT DataOps](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_palm_api.ipynb) - parameterize the topics and time period of interest, run the extraction against GDELT for article and news content
-3. [Vector Store Index Loader](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_palm_api.ipynb) - create embeddings and load the vectors into the Matching Engine Vector Store. Test the semantic search capabilities and langchain agent using the Vector Store.
-4. [Build Zeitghost Image](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_palm_api.ipynb) - create a custom container to be used to create the GDELT pipeline for ongoing data updates
-5. [GDELT Pipelines](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_palm_api.ipynb) - create the pipeline to orchestrate and automatically refresh the data and update the new vectors into the matching engine index
-6. [Plan and Execute Agents](https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_palm_api.ipynb) - create new agents using the BigQuery public trends dataset, and the Google Search API, and use the agents together to uncover new insights 
+
+### Step 3: Clone this repo 
+* Once the Vertex AI Workbench instance is created, open a terminal via the file menu: **File > New > Terminal**
+* Run the following code to clone this repo:
+
+```bash
+git clone https://github.com/hello-d-lee/conversational-agents-zeitghost.git
+```
+
+### Step 4: Go to the first notebook (`00-env-setup.ipynb`), follow the instructions, and continue through the remaining notebooks
+
+0. [Environment Setup](https://github.com/hello-d-lee/conversational-agents-zeitghost/blob/main/notebooks/00-env-setup.ipynb) - used to create configurations once that can be used for the rest of the notebooks
+1. [Setup Vertex Vector Store](https://github.com/hello-d-lee/conversational-agents-zeitghost/blob/main/notebooks/01-setup-vertex-vector-store.ipynb) - create the Vertex AI Matching Engine Vector Store Index, deploy it to an endpoint. This can take 40-50 min, so whilst waiting the next notebook can be run. 
+2. [GDELT DataOps](https://github.com/hello-d-lee/conversational-agents-zeitghost/blob/main/notebooks/02-gdelt-data-ops.ipynb) - parameterize the topics and time period of interest, run the extraction against GDELT for article and news content
+3. [Vector Store Index Loader](https://github.com/hello-d-lee/conversational-agents-zeitghost/blob/main/notebooks/03-vector-store-index-loader.ipynb) - create embeddings and load the vectors into the Matching Engine Vector Store. Test the semantic search capabilities and langchain agent using the Vector Store.
+4. [Build Zeitghost Image](https://github.com/hello-d-lee/conversational-agents-zeitghost/blob/main/notebooks/04-build-zeitghost-image.ipynb) - create a custom container to be used to create the GDELT pipeline for ongoing data updates
+5. [GDELT Pipelines](https://github.com/hello-d-lee/conversational-agents-zeitghost/blob/main/notebooks/05-gdelt-pipelines.ipynb) - create the pipeline to orchestrate and automatically refresh the data and update the new vectors into the matching engine index
+6. [Plan and Execute Agents](https://github.com/hello-d-lee/conversational-agents-zeitghost/blob/main/notebooks/06-plan-and-execute-agents.ipynb) - create new agents using the BigQuery public trends dataset, and the Google Search API, and use the agents together to uncover new insights 
