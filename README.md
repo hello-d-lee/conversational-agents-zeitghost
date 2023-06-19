@@ -131,10 +131,7 @@ gcloud notebooks instances create $INSTANCE_NAME \
   --vm-image-family=tf-latest-cu113-debian-11-py39 \
   --machine-type=n1-standard-8 \
   --location=us-central1-a \
-  --network=$VPC_NETWORK \
-  --install-gpu-driver \
-  --accelerator-type=NVIDIA_TESLA_T4 \
-  --accelerator-core-count=1
+  --network=$VPC_NETWORK
 ```
 
 ### Step 3: Clone this repo 
