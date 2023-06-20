@@ -8,7 +8,7 @@ google-cloud-bigquery
 google-cloud-aiplatform==1.25.0
 protobuf==3.20.3
 oauth2client==3.0.0
-pydantic
+pydantic==1.10.9
 pypdf
 gcsfs
 langchain
