@@ -1,5 +1,25 @@
 # Welcome to the Zeitghost - Build Your Own News & Media Listening Platform with a Conversational Agent
 
+
+# Update - 7.20.23 - Streamlit UI
+
+A hardcoded example of running a UI application with Streamlight is now found in [`notebooks/07-streamlit-ui-plan-and-execute.py`](notebooks/07-streamlit-ui-plan-and-execute.py)
+
+`pip install streamlit`
+Also, upgrade langchain and sqlalchemy-bigquery:
+`pip install -U langchain`
+`pip install -U sqlalchemy-bigquery`
+
+### To run the UI:
+`cd notebooks`
+`streamlit 07-streamlit-ui-plan-and-execute.py`
+
+Your browser will pop up with with the UI
+
+<center>
+<img src="notebooks/imgs/da-ui.png" width="500"/>
+</center>
+
 The repo contains a set of notebooks and helper classes to enable you to create a conversational agent with access to a variety of datasets and APIs (tools) to answer end-user questions.
 
 By the final notebook, you'll have created an agent with access to the following tools:
