@@ -13,6 +13,9 @@ from langchain.callbacks import StreamlitCallbackHandler
 from langchain.chains import LLMMathChain, SQLDatabaseChain
 from langchain.utilities import DuckDuckGoSearchAPIWrapper
 from langchain.llms import VertexAI
+from langchain.embeddings import VertexAIEmbeddings
+
+
 
 
 from zeitghost.agents.LangchainAgent import LangchainAgent
@@ -25,7 +28,7 @@ st.set_page_config(
 )
 "# 🦜🔗 Langchain for Google Palm"
 
-ACTOR_PREFIX = "ggl"
+ACTOR_PREFIX             = "ggl"
 VERSION                  = 'v1'
 PROJECT_ID               = 'cpg-cdp'
 BUCKET_NAME              = f'zghost-{ACTOR_PREFIX}-{VERSION}-{PROJECT_ID}'
@@ -41,7 +44,6 @@ REGION                   = "us-central1"
 BQ_LOCATION              = "US"
 VPC_NETWORK_NAME         = "genai-haystack-vpc"
 CREATE_NEW_ASSETS        = "True"
-ACTOR_PREFIX    
 VERSION                  = "v1"
 ACTOR_NAME               = "google"
 ACTOR_CATEGORY           = "technology"
@@ -57,11 +59,11 @@ MY_BQ_DATASET            = "zghost_ggl_v1"
 MY_BQ_TRENDS_DATASET     = "zghost_ggl_v1_trends"
 
 
-
+#TODO - this works fine from a notebook but getting UNKNOWN errors when trying to access ME from a signed-in env (for user)
 # from zeitghost.vertex.Embeddings import VertexEmbeddings
 
-# from zeitghost.vertex.MatchingEngineCRUD import MatchingEngineCRUD
-# from zeitghost.vertex.MatchingEngineVectorstore import MatchingEngineVectorStore
+from zeitghost.vertex.MatchingEngineCRUD import MatchingEngineCRUD
+from zeitghost.vertex.MatchingEngineVectorstore import MatchingEngineVectorStore
 
 # Google Cloud
 # from google.cloud import aiplatform as vertex_ai
@@ -73,41 +75,42 @@ MY_BQ_TRENDS_DATASET     = "zghost_ggl_v1_trends"
 # storage_client = storage.Client(project=PROJECT_ID)
 
 ## Instantiate the Vertex AI resources, Agents, and Tools
-# mengine = MatchingEngineCRUD(
-#     project_id=PROJECT_ID 
-#     , project_num=PROJECT_NUM
-#     , region=LOCATION 
-#     , index_name=ME_INDEX_NAME
-#     , vpc_network_name=VPC_NETWORK_FULL
-# )
+mengine = MatchingEngineCRUD(
+    project_id=PROJECT_ID 
+    , project_num=PROJECT_NUM
+    , region=LOCATION 
+    , index_name=ME_INDEX_NAME
+    , vpc_network_name=VPC_NETWORK_FULL
+)
 
-# ME_INDEX_RESOURCE_NAME, ME_INDEX_ENDPOINT_ID = mengine.get_index_and_endpoint()
-# ME_INDEX_ID=ME_INDEX_RESOURCE_NAME.split("/")[5]
-
-
-# REQUESTS_PER_MINUTE = 200 # project quota==300
-# vertex_embedding = VertexEmbeddings(requests_per_minute=REQUESTS_PER_MINUTE)
-
-# me = MatchingEngineVectorStore.from_components(
-#     project_id=PROJECT_ID
-#     , region=LOCATION
-#     , gcs_bucket_name=BUCKET_NAME
-#     , embedding=vertex_embedding
-#     , index_id=ME_INDEX_ID
-#     , endpoint_id=ME_INDEX_ENDPOINT_ID
-#     , k = 10
-# )
+ME_INDEX_RESOURCE_NAME, ME_INDEX_ENDPOINT_ID = mengine.get_index_and_endpoint()
+ME_INDEX_ID=ME_INDEX_RESOURCE_NAME.split("/")[5]
 
 
-### Create VectorStore Agent tool
+REQUESTS_PER_MINUTE = 200 # project quota==300
+vertex_embedding = VertexAIEmbeddings(requests_per_minute=REQUESTS_PER_MINUTE)
 
-# vertex_langchain_agent = LangchainAgent()
 
-# vectorstore_agent = vertex_langchain_agent.get_vectorstore_agent(
-#     vectorstore=me
-#     , vectorstore_name=f"news on {ACTOR_NAME}"
-#     , vectorstore_description=f"a vectorstore containing news articles and current events for {ACTOR_NAME}."
-# )
+me = MatchingEngineVectorStore.from_components(
+    project_id=PROJECT_ID
+    , region=LOCATION
+    , gcs_bucket_name=BUCKET_NAME
+    , embedding=vertex_embedding
+    , index_id=ME_INDEX_ID
+    , endpoint_id=ME_INDEX_ENDPOINT_ID
+    , k = 10
+)
+
+
+## Create VectorStore Agent tool
+
+vertex_langchain_agent = LangchainAgent()
+
+vectorstore_agent = vertex_langchain_agent.get_vectorstore_agent(
+    vectorstore=me
+    , vectorstore_name=f"news on {ACTOR_NAME}"
+    , vectorstore_description=f"a vectorstore containing news articles and current events for {ACTOR_NAME}."
+)
 
 ## BigQuery Agent 
 
@@ -131,21 +134,15 @@ bq_agent_tools[0].description = bq_agent_tools[0].description + \
 
 ## Build an Agent that has access to Multiple Tools
 
-llm = VertexAI(temperature=0)
-
-# me_qa_chain = RetrievalQA.from_chain_type(
-#     llm=llm, chain_type="stuff", retriever=me.as_retreiver()
-# )
+llm = VertexAI()
 
 dataset = 'google_trends_my_project'
 
 db = SQLDatabase.from_uri(f"bigquery://{PROJECT_ID}/{dataset}")
 
-# db_chain = SQLDatabaseChain.from_llm(llm, db)
-
 llm_math_chain = LLMMathChain.from_llm(llm=llm, verbose=True)
 
-# me_tools = vectorstore_agent.tools
+me_tools = vectorstore_agent.tools
 
 search = DuckDuckGoSearchAPIWrapper()
 
@@ -189,3 +186,11 @@ if with_clear_container(submit_clicked):
     st_callback = StreamlitCallbackHandler(answer_container)
     answer = mrkl.run(user_input, callbacks=[st_callback])
     answer_container.write(answer)
+
+
+"#### Here's some info on the tools in this agent: "
+for t in tools:
+    st.write(t.name)
+    st.write(t.description)
+    st.write('\n')
+
