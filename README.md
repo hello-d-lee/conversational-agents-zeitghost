@@ -6,12 +6,17 @@
 A hardcoded example of running a UI application with Streamlight is now found in [`notebooks/07-streamlit-ui-plan-and-execute.py`](notebooks/07-streamlit-ui-plan-and-execute.py)
 
 `pip install streamlit`
+
 Also, upgrade langchain and sqlalchemy-bigquery:
+
 `pip install -U langchain`
+
 `pip install -U sqlalchemy-bigquery`
 
 ### To run the UI:
+
 `cd notebooks`
+
 `streamlit 07-streamlit-ui-plan-and-execute.py`
 
 Your browser will pop up with with the UI
